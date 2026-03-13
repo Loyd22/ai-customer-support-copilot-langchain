@@ -1,10 +1,11 @@
 """
 Chat orchestration service for the AI Customer Support Copilot.
 
-This module coordinates routing, memory, RAG answering, and tool lookups
-so the chat endpoint can return one structured response.
+This module coordinates routing, memory, RAG answering, tool lookups,
+and escalation detection so the chat endpoint can return one structured response.
 """
 
+from app.services.escalation_service import check_escalation
 from app.services.memory_service import (
     build_memory_summary,
     save_assistant_message,
@@ -47,6 +48,7 @@ def handle_chat(session_id: str, message: str) -> dict:
     save_user_message(session_id, message)
 
     route_info = classify_route(message)
+    escalation = check_escalation(message)
 
     if route_info["route"] == "tool":
         tool_name = route_info["tool_name"]
@@ -68,6 +70,9 @@ def handle_chat(session_id: str, message: str) -> dict:
             answer = result["message"]
             used_tools = [tool_name] if tool_name else []
 
+        if escalation["needed"]:
+            answer = f"{answer} This case should be reviewed by a human support agent."
+
         save_assistant_message(session_id, answer)
 
         return {
@@ -76,10 +81,7 @@ def handle_chat(session_id: str, message: str) -> dict:
             "used_tools": used_tools,
             "sources": [],
             "memory_summary": build_memory_summary(session_id),
-            "escalation": {
-                "needed": False,
-                "reason": None,
-            },
+            "escalation": escalation,
         }
 
     rag_result = answer_with_rag(
@@ -87,16 +89,18 @@ def handle_chat(session_id: str, message: str) -> dict:
         session_id=session_id,
     )
 
-    save_assistant_message(session_id, rag_result["answer"])
+    answer = rag_result["answer"]
+
+    if escalation["needed"]:
+        answer = f"{answer}\n\nThis case should be reviewed by a human support agent."
+
+    save_assistant_message(session_id, answer)
 
     return {
-        "answer": rag_result["answer"],
+        "answer": answer,
         "action": "rag",
         "used_tools": [],
         "sources": rag_result["sources"],
         "memory_summary": build_memory_summary(session_id),
-        "escalation": {
-            "needed": False,
-            "reason": None,
-        },
+        "escalation": escalation,
     }
