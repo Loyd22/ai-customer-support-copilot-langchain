@@ -1,0 +1,20 @@
+[
+  {
+    "ticket_id": "T-9001",
+    "customer_id": "cust_001",
+    "subject": "Refund request for delayed order",
+    "status": "open",
+    "priority": "medium",
+    "created_at": "2026-03-09",
+    "summary": "Customer requested a refund because order 1024 is delayed."
+  },
+  {
+    "ticket_id": "T-9002",
+    "customer_id": "cust_002",
+    "subject": "Wrong item delivered",
+    "status": "pending",
+    "priority": "high",
+    "created_at": "2026-03-10",
+    "summary": "Customer reported receiving the wrong item and requested replacement."
+  }
+]
