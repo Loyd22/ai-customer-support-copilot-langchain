@@ -1,0 +1,666 @@
+Step-by-step build plan
+Step 1: Freeze the project scope
+
+First, we define exactly what version 1 will do.
+
+We will finalize:
+
+main user questions supported
+
+system actions supported
+
+response JSON format
+
+tools included in MVP
+
+what counts as escalation
+
+what will not be included yet
+
+MVP scope
+
+We will support:
+
+support/policy questions via RAG
+
+order lookup
+
+ticket lookup
+
+customer lookup
+
+session memory
+
+structured answers
+
+escalation flag
+
+React chat UI
+
+FastAPI backend
+
+Docker
+
+Not yet
+
+auth
+
+Postgres
+
+Redis
+
+admin dashboard
+
+multi-user roles
+
+production monitoring
+
+Deliverable
+
+A clear project definition so the build stays focused.
+
+Step 2: Design the API contract
+
+Before coding logic, we define the backend contract.
+
+We will design:
+
+GET /health
+
+POST /chat
+
+POST /ingest
+
+GET /sessions/{session_id}
+
+DELETE /sessions/{session_id}
+
+Most important
+
+We finalize the response shape for /chat.
+
+Example:
+
+{
+  "answer": "Order 1024 is currently in transit.",
+  "action": "tool",
+  "used_tools": ["order_lookup"],
+  "sources": [],
+  "memory_summary": "User is asking about delayed order 1024.",
+  "escalation": {
+    "needed": false,
+    "reason": null
+  }
+}
+Deliverable
+
+Stable request/response schemas.
+
+Step 3: Design the mock data layer
+
+Before tools, we need records to search.
+
+We will create:
+
+orders.json
+
+tickets.json
+
+customers.json
+
+We will define fields like:
+
+order id
+
+customer id
+
+order status
+
+delivery estimate
+
+ticket status
+
+ticket priority
+
+customer tier
+
+Deliverable
+
+Clean mock data that tools can read.
+
+Step 4: Design the backend folder structure
+
+Before implementation, we define separation of concerns.
+
+We will prepare folders for:
+
+routes
+
+schemas
+
+services
+
+repositories
+
+tools
+
+rag
+
+prompts
+
+chains
+
+graph
+
+tests
+
+Deliverable
+
+Production-style project structure from the start.
+
+Step 5: Set up the backend skeleton
+
+Now we create the FastAPI foundation.
+
+We will build:
+
+FastAPI app
+
+versioned routes
+
+settings/config
+
+basic schemas
+
+health route
+
+startup structure
+
+Deliverable
+
+Backend starts correctly and has /health.
+
+Step 6: Build document ingestion for RAG
+
+Now we prepare the knowledge base.
+
+We will implement:
+
+document loader
+
+text splitter
+
+embeddings
+
+Chroma vector store
+
+ingestion route
+
+Goal
+
+Upload or load support docs and turn them into searchable chunks.
+
+Deliverable
+
+Documents are indexed into Chroma.
+
+Step 7: Build the basic LangChain RAG pipeline
+
+Now we teach the app how to answer doc-based questions.
+
+We will implement:
+
+retriever
+
+prompt template
+
+LangChain RAG chain
+
+grounded answer generation
+
+source formatting
+
+Goal
+
+Questions like:
+
+“What is the refund policy?”
+
+should return:
+
+answer
+
+citations
+
+action = rag
+
+Deliverable
+
+Working RAG path.
+
+Step 8: Build the mock repositories
+
+Now we build the data access layer for tools.
+
+We will create:
+
+OrderRepository
+
+TicketRepository
+
+CustomerRepository
+
+Each repository will:
+
+load JSON
+
+search by id
+
+return structured data
+
+Deliverable
+
+Clean backend data layer.
+
+Step 9: Build the tool functions
+
+Now we make functions the AI can call.
+
+Tools:
+
+order lookup
+
+ticket lookup
+
+customer lookup
+
+Example questions:
+
+“Where is order 1024?”
+
+“What is the status of ticket T-9001?”
+
+“Who is customer cust_001?”
+
+Deliverable
+
+Standalone working tools.
+
+Step 10: Build session memory
+
+Now we add remembering.
+
+We will implement:
+
+session-based chat history
+
+store messages by session_id
+
+optional memory summary
+
+session retrieval route
+
+session reset route
+
+Goal
+
+Follow-up questions should work.
+
+Example:
+
+“My order is 1024.”
+
+“Can you check its status?”
+
+The second one should understand what “its” means.
+
+Deliverable
+
+Working memory layer.
+
+Step 11: Build the routing logic
+
+Now we teach the system how to choose the correct path.
+
+It should decide:
+
+use RAG
+
+use tool
+
+escalate
+
+maybe direct answer for simple greetings
+
+First version
+
+Start simple:
+
+keyword/deterministic rules
+
+optional LLM-assisted classifier later
+
+Example:
+
+“refund policy” → RAG
+
+“where is order 1024” → tool
+
+“I want to file a fraud complaint” → escalate
+
+Deliverable
+
+A routing service that selects action type.
+
+Step 12: Build the main chat orchestration service
+
+This is the brain of the backend.
+
+Flow:
+
+receive message
+
+load memory
+
+decide route
+
+call RAG or tool
+
+check escalation
+
+build final structured response
+
+save memory
+
+Deliverable
+
+One clean chat service for /chat.
+
+Step 13: Build the /chat endpoint
+
+Now expose the full system through the API.
+
+Request:
+{
+  "session_id": "session_123",
+  "message": "Where is order 1024?"
+}
+Response:
+
+Structured JSON with:
+
+answer
+
+action
+
+tools used
+
+sources
+
+memory summary
+
+escalation flag
+
+Deliverable
+
+Backend MVP works from one endpoint.
+
+Step 14: Test the backend manually
+
+Before frontend, we confirm the backend is real.
+
+We will test:
+
+health works
+
+doc question works
+
+order question works
+
+ticket question works
+
+follow-up memory works
+
+escalation works
+
+Deliverable
+
+Verified backend behavior.
+
+Step 15: Build the frontend structure
+
+Now we prepare the React app.
+
+We will create:
+
+page
+
+chat window
+
+input box
+
+answer card
+
+source list
+
+action badge
+
+memory panel
+
+escalation banner
+
+Deliverable
+
+Frontend skeleton ready.
+
+Step 16: Connect frontend to backend
+
+Now the UI becomes real.
+
+We will implement:
+
+API client
+
+send message to /chat
+
+render backend response
+
+handle loading/errors
+
+generate or persist session id
+
+Deliverable
+
+Working end-to-end chat app.
+
+Step 17: Show useful UI signals
+
+Now make it interview-friendly.
+
+We will display:
+
+answer
+
+citations
+
+action used
+
+used tool badge
+
+memory summary
+
+escalation warning if needed
+
+Why important
+
+Because interviewers can visually see:
+
+RAG
+
+tools
+
+memory
+
+routing
+
+Deliverable
+
+Strong demo UI.
+
+Step 18: Add LangChain tool integration properly
+
+If earlier tools were plain service calls, now we formalize them in LangChain style.
+
+We will add:
+
+LangChain tool wrappers
+
+structured tool input/output
+
+clean tool registration
+
+Deliverable
+
+Project looks more like real LangChain engineering.
+
+Step 19: Refactor to LangGraph
+
+Only after MVP works.
+
+We will turn the flow into nodes:
+
+load memory
+
+route request
+
+retrieve docs or call tool
+
+evaluate escalation
+
+generate response
+
+save memory
+
+Why later
+
+Because LangGraph is easier to understand after the normal flow already works.
+
+Deliverable
+
+Graph-based workflow.
+
+Step 20: Add quick tests
+
+Now we add proof.
+
+Backend tests:
+
+health test
+
+RAG test
+
+tool test
+
+memory test
+
+escalation test
+
+Frontend checks:
+
+send message
+
+render answer
+
+show sources
+
+show badges
+
+Deliverable
+
+Basic reliability.
+
+Step 21: Dockerize the project
+
+Now package everything.
+
+We will add:
+
+backend Dockerfile
+
+frontend Dockerfile
+
+docker-compose
+
+env example
+
+Deliverable
+
+One-command local run.
+
+Step 22: Clean for portfolio
+
+Now we make it hireable.
+
+We will prepare:
+
+README
+
+architecture diagram
+
+screenshots
+
+demo script
+
+project explanation
+
+“future improvements” section
+
+Deliverable
+
+Portfolio-ready repo.
+
+Best build order in one clean list
+
+Freeze MVP scope
+
+Design API contract
+
+Design mock data
+
+Design folder structure
+
+Set up FastAPI skeleton
+
+Build document ingestion
+
+Build LangChain RAG pipeline
+
+Build mock repositories
+
+Build tool functions
+
+Build session memory
+
+Build routing logic
+
+Build chat orchestration service
+
+Build /chat endpoint
+
+Manually test backend
+
+Build React frontend structure
+
+Connect frontend to backend
+
+Add UI badges, sources, memory panel
+
+Formalize LangChain tools
+
+Refactor to LangGraph
+
+Add tests
+
+Dockerize
+
+Polish for portfolio

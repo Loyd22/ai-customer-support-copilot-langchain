@@ -1,0 +1,82 @@
+# =========================
+# Python
+# =========================
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+.python-version
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# =========================
+# FastAPI / app env
+# =========================
+.env
+.env.*
+!.env.example
+
+# =========================
+# Chroma / vector DB
+# =========================
+app/data/chroma/
+backend/app/data/chroma/
+
+# =========================
+# Logs
+# =========================
+*.log
+logs/
+*.out
+
+# =========================
+# OS / Editor
+# =========================
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# =========================
+# Node / Frontend
+# =========================
+node_modules/
+dist/
+build/
+coverage/
+.npm/
+.pnpm-store/
+.parcel-cache/
+.next/
+out/
+
+# Vite
+vite.svg
+
+# =========================
+# TypeScript
+# =========================
+*.tsbuildinfo
+
+# =========================
+# Docker
+# =========================
+*.pid
+*.seed
+
+# =========================
+# Misc
+# =========================
+tmp/
+temp/

@@ -1,24 +1,26 @@
 """
 Chat route definitions.
 
-This module contains the main chat endpoint. It uses the chat service
-to automatically route requests to either RAG or structured tools.
+This module contains the main chat endpoint. It invokes the LangGraph
+workflow to process support questions through state-based orchestration.
 """
 
 from fastapi import APIRouter
 
+from app.graph.support_graph import support_graph
 from app.schemas.chat import ChatRequest, ChatResponse, EscalationInfo, SourceItem
-from app.services.chat_service import handle_chat
 
 router = APIRouter()
 
 
 @router.post("/chat", response_model=ChatResponse)
 def chat(payload: ChatRequest) -> ChatResponse:
-    """Handle a user chat message through the main orchestration service."""
-    result = handle_chat(
-        session_id=payload.session_id,
-        message=payload.message,
+    """Handle a user chat message through the LangGraph workflow."""
+    result = support_graph.invoke(
+        {
+            "session_id": payload.session_id,
+            "message": payload.message,
+        }
     )
 
     return ChatResponse(
