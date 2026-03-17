@@ -182,3 +182,163 @@
     border-right-color: var(--border);
   }
 }
+.copilot-page {
+  min-height: 100vh;
+  padding: 24px;
+  background: #f8fafc;
+}
+
+.copilot-shell {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.copilot-header {
+  background: linear-gradient(135deg, #eff6ff 0%, #ffffff 100%);
+  border: 1px solid #dbe4f0;
+  border-radius: 24px;
+  padding: 24px;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05);
+}
+
+.copilot-eyebrow {
+  margin: 0 0 8px 0;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #2563eb;
+}
+
+.copilot-title {
+  margin: 0;
+  font-size: 32px;
+  line-height: 1.1;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.copilot-subtitle {
+  margin: 10px 0 0 0;
+  max-width: 720px;
+  font-size: 15px;
+  line-height: 1.65;
+  color: #475569;
+}
+
+.chat-panel {
+  background: #ffffff;
+  border: 1px solid #dbe4f0;
+  border-radius: 24px;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05);
+  min-height: 65vh;
+}
+
+.messages-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 22px;
+}
+
+.empty-state {
+  padding: 40px 20px;
+  text-align: center;
+  border: 1px dashed #cbd5e1;
+  border-radius: 18px;
+  background: #f8fafc;
+}
+
+.empty-state h2 {
+  margin: 0 0 10px 0;
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--text);
+  letter-spacing: -0.02em;
+}
+
+.empty-state-text {
+  margin: 0 0 14px 0;
+  color: var(--muted);
+  line-height: 1.7;
+  font-size: 14px;
+}
+
+.empty-state-list {
+  margin: 0;
+  padding-left: 18px;
+  color: #475569;
+  text-align: left;
+  display: inline-block;
+  line-height: 1.9;
+  font-size: 14px;
+}
+}
+
+.chat-input-panel {
+  position: sticky;
+  bottom: 0;
+}
+
+.typing-bubble {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 14px 16px;
+  background: #ffffff;
+  border: 1px solid #dbe4f0;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+}
+
+.typing-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: #94a3b8;
+  animation: typingPulse 1.2s infinite ease-in-out;
+}
+
+.typing-dot:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.typing-dot:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+@keyframes typingPulse {
+  0%,
+  80%,
+  100% {
+    opacity: 0.35;
+    transform: translateY(0);
+  }
+
+  40% {
+    opacity: 1;
+    transform: translateY(-2px);
+  }
+}
+
+@media (max-width: 768px) {
+  .copilot-page {
+    padding: 14px;
+  }
+
+  .copilot-header,
+  .chat-panel {
+    border-radius: 18px;
+  }
+
+  .copilot-title {
+    font-size: 26px;
+  }
+
+  .messages-list {
+    padding: 16px;
+  }
+}

@@ -14,6 +14,10 @@ type ChatInputProps = {
 
 export default function ChatInput({ onSend, isLoading }: ChatInputProps) {
   const [message, setMessage] = useState("");
+  const isSubmitDisabled = isLoading || !message.trim();
+  const placeholderText = isLoading
+    ? "Support Assistant is replying..."
+    : "Ask about refunds, orders, tickets, or support policies...";
 
   /**
    * Handle form submission and send the current message upward.
@@ -21,7 +25,7 @@ export default function ChatInput({ onSend, isLoading }: ChatInputProps) {
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    if (!message.trim() || isLoading) {
+    if (isSubmitDisabled) {
       return;
     }
 
@@ -31,16 +35,24 @@ export default function ChatInput({ onSend, isLoading }: ChatInputProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="chat-input-form">
+    <form
+      onSubmit={handleSubmit}
+      className={`chat-input-form ${isLoading ? "chat-input-form-loading" : ""}`}
+      aria-busy={isLoading}
+    >
       <input
         type="text"
         value={message}
         onChange={(event) => setMessage(event.target.value)}
-        placeholder="Ask about refund policy, order 1024, ticket T-9001..."
+        placeholder={placeholderText}
         className="chat-input"
+        aria-label="Message the support assistant"
+        autoComplete="off"
+        disabled={isLoading}
       />
-      <button type="submit" disabled={isLoading} className="chat-button">
-        {isLoading ? "Sending..." : "Send"}
+      <button type="submit" disabled={isSubmitDisabled} className="chat-button">
+        {isLoading && <span className="chat-button-spinner" aria-hidden="true" />}
+        <span>{isLoading ? "Waiting..." : "Send"}</span>
       </button>
     </form>
   );
